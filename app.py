@@ -23,39 +23,38 @@ import streamlit as st
 
 # Daftar gejala (fakta) L01 - L25
 GEJALA = {
-    "L01": "Buang air besar (BAB) cair lebih dari 3 kali sehari",
-    "L02": "Tinja berlendir atau bercampur darah",
-    "L03": "Nyeri / kram pada perut",
-    "L04": "Mual dan muntah",
-    "L05": "Lemas, mata cekung, bibir kering (tanda dehidrasi)",
-    "L06": "Demam tinggi mendadak (lebih dari 38°C)",
-    "L07": "Kejang pada seluruh tubuh",
-    "L08": "Mata mendelik ke atas saat kejang",
-    "L09": "Tubuh kaku kemudian diikuti kelonjotan (kejang klonik)",
-    "L10": "Kehilangan kesadaran sesaat saat kejang",
-    "L11": "Batuk berdahak",
-    "L12": "Sesak napas",
-    "L13": "Napas cepat dan pendek (takipnea)",
-    "L14": "Terdengar suara napas grok-grok / ronkhi",
-    "L15": "Tarikan dinding dada ke dalam saat bernapas",
-    "L16": "Sesak napas yang berulang / kambuhan",
-    "L17": "Mengi atau bengek saat bernapas (wheezing)",
-    "L18": "Batuk terutama pada malam atau dini hari",
-    "L19": "Dada terasa berat atau sempit",
-    "L20": "Sesak kambuh setelah aktivitas fisik, udara dingin, atau alergen",
-    "L21": "Perut tampak buncit atau kembung",
-    "L22": "Gatal di sekitar area anus, terutama pada malam hari",
-    "L23": "Nafsu makan menurun",
-    "L24": "Berat badan sulit naik / tubuh tampak kurus",
-    "L25": "Tampak pucat dan lemas (tanda anemia)",
+    "L01": "Bab cair lebih dari 3x sehari",
+    "L02": "Lesu",
+    "L03": "Nafsu makan berkurang",
+    "L04": "Keram pada perut",
+    "L05": "Perut kembung",
+    "L06": "Demam",
+    "L07": "Muntah",
+    "L08": "Kejang 1-2x sehari",
+    "L09": "Bab cair",
+    "L10": "Sesak nafas",
+    "L11": "Terlihat sangat mengantuk",
+    "L12": "Batuk",
+    "L13": "Pilek",
+    "L14": "Menggigil",
+    "L15": "Dada terasa sakit",
+    "L16": "Sakit kepala",
+    "L17": "Nafas berbunyi (mengi)",
+    "L18": "Faktor keturunan",
+    "L19": "Susah tidur",
+    "L20": "Anak tampak kurus",
+    "L21": "Pucat",
+    "L22": "Gatal sekitar anus",
+    "L23": "Gelisah atau tidak nyaman saat tidur",
+    "L24": "Iritasi kulit sekitar anus",
+    "L25": "Sering sakit perut",
 }
-
 # Basis aturan (Rule Base): T01-T05, format IF-THEN
 # requires = gejala WAJIB (semua harus terpenuhi agar rule "fully fired")
 RULES = {
     "T01": {
         "nama": "Diare",
-        "requires": ["L01", "L02", "L03", "L04", "L05"],
+        "requires": ["L01", "L02", "L03", "L04", "L05", "L06", "L07"],
         "solusi": [
             "Berikan oralit / cairan rehidrasi oral untuk mencegah dehidrasi.",
             "Tetap berikan ASI/makanan dengan porsi kecil namun sering.",
@@ -65,7 +64,7 @@ RULES = {
     },
     "T02": {
         "nama": "Kejang Demam",
-        "requires": ["L06", "L07", "L08", "L09", "L10"],
+        "requires": ["L06", "L07", "L08", "L09", "L10", "L11", "L12", "L13"],
         "solusi": [
             "Baringkan anak pada posisi miring agar tidak tersedak.",
             "Jangan memasukkan benda apa pun ke dalam mulut anak saat kejang.",
@@ -76,7 +75,7 @@ RULES = {
     },
     "T03": {
         "nama": "Bronchopneumonia",
-        "requires": ["L06", "L11", "L12", "L13", "L14", "L15"],
+        "requires": ["L03", "L06", "L10", "L12", "L14", "L15", "L16"],
         "solusi": [
             "Segera bawa anak ke dokter/fasilitas kesehatan, terutama bila disertai tarikan dinding dada.",
             "Jaga anak tetap dalam posisi setengah duduk agar lebih mudah bernapas.",
@@ -86,7 +85,7 @@ RULES = {
     },
     "T04": {
         "nama": "Asma",
-        "requires": ["L16", "L17", "L18", "L19", "L20"],
+        "requires": ["L02", "L10", "L12", "L17", "L18", "L19"],
         "solusi": [
             "Jauhkan anak dari pemicu (debu, asap, udara dingin, bulu hewan).",
             "Bila tersedia, gunakan obat pereda (inhaler) sesuai resep dokter.",
@@ -96,7 +95,7 @@ RULES = {
     },
     "T05": {
         "nama": "Cacingan",
-        "requires": ["L21", "L22", "L23", "L24", "L25"],
+        "requires": ["L20", "L21", "L22", "L23", "L24", "L25"],
         "solusi": [
             "Berikan obat cacing sesuai anjuran dokter/puskesmas.",
             "Tingkatkan kebersihan diri: cuci tangan sebelum makan dan setelah dari toilet.",
@@ -164,8 +163,6 @@ with st.expander("ℹ️ Tentang sistem ini"):
         - **Mesin inferensi**: Forward Chaining — penelusuran dimulai dari fakta/gejala (IF),
           lalu dicocokkan secara maju untuk menguji hipotesis hingga diperoleh kesimpulan (THEN).
 
-        ⚠️ **Disclaimer**: Hasil dari aplikasi ini hanya sebagai simulasi/alat bantu edukasi,
-        bukan pengganti diagnosis medis dari dokter atau tenaga kesehatan profesional.
         """
     )
 
@@ -246,10 +243,6 @@ if diagnosa_btn:
             for h in hasil:
                 st.write(f"- {h['kode']} — {h['nama']}: {h['persentase']:.0f}% kecocokan ({h['jumlah_cocok']}/{h['total_gejala_rule']} gejala)")
 
-        st.caption(
-            "⚠️ Hasil ini bersifat simulatif berdasarkan basis aturan sederhana dan tidak menggantikan "
-            "pemeriksaan medis langsung oleh dokter."
-        )
 
 st.markdown("---")
 st.caption("Sumber referensi konsep: Analisis Komponen Sistem Pakar pada Sistem Deteksi Penyakit Anak — "
