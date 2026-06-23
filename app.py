@@ -184,10 +184,13 @@ st.markdown("---")
 col_a, col_b = st.columns([1, 4])
 with col_a:
     diagnosa_btn = st.button("🔍 Diagnosis Sekarang", type="primary", use_container_width=True)
+
+def reset_action():
+    for kode in GEJALA:
+        st.session_state[kode] = False
+
 with col_b:
-    if st.button("↺ Reset Pilihan Gejala"):
-        for kode in GEJALA:
-            st.session_state[kode] = False
+    if st.button("↺ Reset Pilihan Gejala", on_click=reset_action):
         st.rerun()
 
 if diagnosa_btn:
